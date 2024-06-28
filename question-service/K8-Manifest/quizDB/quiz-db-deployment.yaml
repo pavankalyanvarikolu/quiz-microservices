@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz-db
+  namespace: quiz-app-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quiz-db
+  template:
+    metadata:
+      labels:
+        app: quiz-db
+    spec:
+      containers:
+        - name: quiz-db
+          image: postgres:11
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: quiz-service-configmap
+          volumeMounts:
+            - name: quiz-db-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: quiz-db-data
+          persistentVolumeClaim:
+            claimName: quiz-db-pvc
+      restartPolicy: Always
