@@ -15,17 +15,21 @@ spec:
     spec:
       containers:
         - name: quiz-db
-          image: postgres:11
+          image: postgres:latest
           ports:
             - containerPort: 5432
-          envFrom:
-            - configMapRef:
-                name: quiz-service-configmap
+          env:
+            - name: POSTGRES_DB
+              value: quizdb
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: "0000"
           volumeMounts:
-            - name: quiz-db-data
-              mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data
       volumes:
-        - name: quiz-db-data
-          persistentVolumeClaim:
-            claimName: quiz-db-pvc
-      restartPolicy: Always
+        - name: postgres-data
+          emptyDir: {}
+
+
